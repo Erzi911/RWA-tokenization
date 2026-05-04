@@ -1,0 +1,15 @@
+{
+  "extends": "solhint:recommended",
+  "rules": {
+    "compiler-version": ["error", "^0.8.24"],
+    "func-visibility": ["error", { "ignoreConstructors": true }],
+    "no-empty-blocks": "warn",
+    "avoid-call-value": "error",
+    "check-send-result": "error",
+    "reentrancy": "error",
+    "max-line-length": ["warn", 120],
+    "no-unused-vars": "warn",
+    "natspec-param-check": "off",
+    "require-natspec": "off"
+  }
+}
