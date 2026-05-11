@@ -22,30 +22,30 @@ contract RWATokenTest is BaseTest {
         assertTrue(token.hasRole(token.DEFAULT_ADMIN_ROLE(), admin));
     }
 
-    function test_deployRevertsOnZeroAdmin() public view {
+    function test_deployRevertsOnZeroAdmin() public {
         vm.expectRevert(RWAToken.ZeroAddress.selector);
         new RWAToken("T", "T", address(0));
     }
 
-    function test_mint_updatesBalance() public view {
+    function test_mint_updatesBalance() public {
         _mint(alice, 1_000e18);
         assertEq(token.balanceOf(alice), 1_000e18);
     }
 
-    function test_mint_updatesTotalSupply() public view {
+    function test_mint_updatesTotalSupply() public {
         _mint(alice, 500e18);
         _mint(bob, 300e18);
         assertEq(token.totalSupply(), 800e18);
     }
 
-    function test_mint_emitsEvent() public view {
+    function test_mint_emitsEvent() public {
         vm.prank(issuer);
         vm.expectEmit(true, true, false, true);
         emit RWAToken.TokensMinted(alice, 1e18, issuer);
         token.mint(alice, 1e18);
     }
 
-    function test_mint_revertsIfNotMinter() public view {
+    function test_mint_revertsIfNotMinter() public {
         vm.prank(alice);
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -57,19 +57,19 @@ contract RWATokenTest is BaseTest {
         token.mint(alice, 1e18);
     }
 
-    function test_mint_revertsOnZeroAddress() public view {
+    function test_mint_revertsOnZeroAddress() public {
         vm.prank(issuer);
         vm.expectRevert(RWAToken.ZeroAddress.selector);
         token.mint(address(0), 1e18);
     }
 
-    function test_mint_revertsOnZeroAmount() public view {
+    function test_mint_revertsOnZeroAmount() public {
         vm.prank(issuer);
         vm.expectRevert(RWAToken.ZeroAmount.selector);
         token.mint(alice, 0);
     }
 
-    function test_burn_decreasesBalance() public view {
+    function test_burn_decreasesBalance() public {
         _mint(alice, 1_000e18);
         vm.prank(admin);
         token.grantRole(token.BURNER_ROLE(), admin);
@@ -78,7 +78,7 @@ contract RWATokenTest is BaseTest {
         assertEq(token.balanceOf(alice), 600e18);
     }
 
-    function test_burn_revertsIfNotBurner() public view {
+    function test_burn_revertsIfNotBurner() public {
         _mint(alice, 100e18);
         vm.prank(alice);
         vm.expectRevert(
@@ -91,7 +91,7 @@ contract RWATokenTest is BaseTest {
         token.burn(alice, 100e18);
     }
 
-    function test_transfer() public view {
+    function test_transfer() public {
         _mint(alice, 1_000e18);
         vm.prank(alice);
         token.transfer(bob, 250e18);
@@ -99,19 +99,19 @@ contract RWATokenTest is BaseTest {
         assertEq(token.balanceOf(bob), 250e18);
     }
 
-    function test_votes_zeroBeforeDelegate() public view {
+    function test_votes_zeroBeforeDelegate() public {
         _mint(alice, 1_000e18);
         assertEq(token.getVotes(alice), 0);
     }
 
-    function test_votes_afterSelfDelegate() public view {
+    function test_votes_afterSelfDelegate() public {
         _mint(alice, 1_000e18);
         vm.prank(alice);
         token.delegate(alice);
         assertEq(token.getVotes(alice), 1_000e18);
     }
 
-    function test_votes_delegateToOther() public view {
+    function test_votes_delegateToOther() public {
         _mint(alice, 1_000e18);
         vm.prank(alice);
         token.delegate(bob);
@@ -119,7 +119,7 @@ contract RWATokenTest is BaseTest {
         assertEq(token.getVotes(alice), 0);
     }
 
-    function test_votes_updatesOnTransfer() public view {
+    function test_votes_updatesOnTransfer() public {
         _mint(alice, 1_000e18);
         vm.prank(alice);
         token.delegate(alice);
@@ -128,7 +128,7 @@ contract RWATokenTest is BaseTest {
         assertEq(token.getVotes(alice), 800e18);
     }
 
-    function test_permit() public view {
+    function test_permit() public {
         uint256 privKey = 0xA11CE;
         address owner = vm.addr(privKey);
         _mint(owner, 100e18);
