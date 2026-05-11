@@ -27,27 +27,27 @@ contract RWAVaultTest is BaseTest {
         assertEq(vault.totalAssets(), 0);
     }
 
-    function test_deposit_givesShares() public view {
+    function test_deposit_givesShares() public {
         _mint(alice, AMT);
         uint256 shares = _deposit(alice, AMT);
         assertGt(shares, 0);
         assertEq(vault.balanceOf(alice), shares);
     }
 
-    function test_deposit_movesTokens() public view {
+    function test_deposit_movesTokens() public {
         _mint(alice, AMT);
         _deposit(alice, AMT);
         assertEq(token.balanceOf(address(vault)), AMT);
         assertEq(token.balanceOf(alice), 0);
     }
 
-    function test_deposit_revertsOnZero() public view {
+    function test_deposit_revertsOnZero() public {
         vm.prank(alice);
         vm.expectRevert(RWAVault.ZeroAssets.selector);
         vault.deposit(0, alice);
     }
 
-    function test_deposit_revertsWhenPaused() public view {
+    function test_deposit_revertsWhenPaused() public {
         _mint(alice, AMT);
         vm.prank(admin);
         vault.setDepositsPaused(true);
@@ -59,7 +59,7 @@ contract RWAVaultTest is BaseTest {
         vm.stopPrank();
     }
 
-    function test_deposit_revertsWhenCapExceeded() public view {
+    function test_deposit_revertsWhenCapExceeded() public {
         vm.prank(admin);
         vault.setDepositCap(500e18);
         _mint(alice, AMT);
@@ -71,7 +71,7 @@ contract RWAVaultTest is BaseTest {
         vm.stopPrank();
     }
 
-    function test_withdraw_returnsTokens() public view {
+    function test_withdraw_returnsTokens() public {
         _mint(alice, AMT);
         _deposit(alice, AMT);
 
@@ -81,7 +81,7 @@ contract RWAVaultTest is BaseTest {
         assertEq(token.balanceOf(alice), before + AMT);
     }
 
-    function test_withdraw_burnsShares() public view {
+    function test_withdraw_burnsShares() public {
         _mint(alice, AMT);
         _deposit(alice, AMT);
         vm.prank(alice);
@@ -90,13 +90,13 @@ contract RWAVaultTest is BaseTest {
         assertEq(vault.totalSupply(), 0);
     }
 
-    function test_withdraw_revertsOnZero() public view {
+    function test_withdraw_revertsOnZero() public {
         vm.prank(alice);
         vm.expectRevert(RWAVault.ZeroAssets.selector);
         vault.withdraw(0, alice, alice);
     }
 
-    function test_redeem_1to1_noYield() public view {
+    function test_redeem_1to1_noYield() public {
         _mint(alice, AMT);
         uint256 shares = _deposit(alice, AMT);
         vm.prank(alice);
@@ -104,29 +104,26 @@ contract RWAVaultTest is BaseTest {
         assertEq(returned, AMT);
     }
 
-    function test_redeem_revertsOnZero() public view {
+    function test_redeem_revertsOnZero() public {
         vm.prank(alice);
         vm.expectRevert(RWAVault.ZeroShares.selector);
         vault.redeem(0, alice, alice);
     }
 
-    function test_yield_sharesAppreciate() public view {
+    function test_yield_sharesAppreciate() public {
         _mint(alice, AMT);
         uint256 shares = _deposit(alice, AMT);
-
-        // simulate yield — someone sends tokens to vault
         _mint(address(vault), 100e18);
-
         assertGt(vault.previewRedeem(shares), AMT);
     }
 
-    function test_cap_canBeUpdated() public view {
+    function test_cap_canBeUpdated() public {
         vm.prank(admin);
         vault.setDepositCap(5_000e18);
         assertEq(vault.depositCap(), 5_000e18);
     }
 
-    function test_cap_zeroIsUnlimited() public view {
+    function test_cap_zeroIsUnlimited() public {
         vm.prank(admin);
         vault.setDepositCap(0);
         _mint(alice, 1_000_000e18);
