@@ -6,12 +6,13 @@ import {ChainlinkAdapter} from "../src/ChainlinkAdapter.sol";
 import {MockAggregator} from "./mocks/MockAggregator.sol";
 
 contract ChainlinkAdapterTest is BaseTest {
-    // warp to a realistic timestamp so subtraction doesn't underflow
     uint256 constant START_TS = 1_700_000_000;
 
     function setUp() public override {
         super.setUp();
         vm.warp(START_TS);
+        // refresh feed timestamp after warp, otherwise price looks stale
+        mockFeed.setAnswer(1_000e8);
     }
 
     function test_feedSet() public view {
