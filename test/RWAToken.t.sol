@@ -46,13 +46,10 @@ contract RWATokenTest is BaseTest {
     }
 
     function test_mint_revertsIfNotMinter() public {
+        bytes32 role = token.MINTER_ROLE(); // cache before prank
         vm.prank(alice);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IAccessControl.AccessControlUnauthorizedAccount.selector,
-                alice,
-                token.MINTER_ROLE()
-            )
+            abi.encodeWithSelector(IAccessControl.AccessControlUnauthorizedAccount.selector, alice, role)
         );
         token.mint(alice, 1e18);
     }
@@ -71,22 +68,20 @@ contract RWATokenTest is BaseTest {
 
     function test_burn_decreasesBalance() public {
         _mint(alice, 1_000e18);
-        vm.prank(admin);
-        token.grantRole(token.BURNER_ROLE(), admin);
-        vm.prank(admin);
+        bytes32 role = token.BURNER_ROLE(); // cache before prank
+        vm.startPrank(admin);
+        token.grantRole(role, admin);
         token.burn(alice, 400e18);
+        vm.stopPrank();
         assertEq(token.balanceOf(alice), 600e18);
     }
 
     function test_burn_revertsIfNotBurner() public {
         _mint(alice, 100e18);
+        bytes32 role = token.BURNER_ROLE(); // cache before prank
         vm.prank(alice);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                IAccessControl.AccessControlUnauthorizedAccount.selector,
-                alice,
-                token.BURNER_ROLE()
-            )
+            abi.encodeWithSelector(IAccessControl.AccessControlUnauthorizedAccount.selector, alice, role)
         );
         token.burn(alice, 100e18);
     }
