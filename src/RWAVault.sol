@@ -6,7 +6,7 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import {ERC4626Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
@@ -16,8 +16,9 @@ contract RWAVault is
     Initializable,
     ERC20Upgradeable,
     ERC4626Upgradeable,
+    
     OwnableUpgradeable,
-    ReentrancyGuardUpgradeable,
+    ReentrancyGuard,
     UUPSUpgradeable
 {
     using Math for uint256;
@@ -51,8 +52,6 @@ contract RWAVault is
         __ERC20_init(name_, symbol_);
         __ERC4626_init(IERC20(asset_));
         __Ownable_init(owner_);
-        __ReentrancyGuard_init();
-        __UUPSUpgradeable_init();
         depositCap = depositCap_;
     }
 
