@@ -6,6 +6,14 @@ import {ChainlinkAdapter} from "../src/ChainlinkAdapter.sol";
 import {MockAggregator} from "./mocks/MockAggregator.sol";
 
 contract ChainlinkAdapterTest is BaseTest {
+    // warp to a realistic timestamp so subtraction doesn't underflow
+    uint256 constant START_TS = 1_700_000_000;
+
+    function setUp() public override {
+        super.setUp();
+        vm.warp(START_TS);
+    }
+
     function test_feedSet() public view {
         assertEq(address(adapter.feed()), address(mockFeed));
     }
@@ -45,7 +53,7 @@ contract ChainlinkAdapterTest is BaseTest {
         vm.expectRevert(
             abi.encodeWithSelector(
                 ChainlinkAdapter.StalePrice.selector,
-                block.timestamp - (STALENESS + 1),
+                START_TS - (STALENESS + 1),
                 STALENESS
             )
         );
