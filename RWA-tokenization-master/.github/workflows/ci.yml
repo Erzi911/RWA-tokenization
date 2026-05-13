@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  # ────────────────────────────────────────────────────────────────────────────
+  build:
+    name: Build & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install dependencies
+        run: forge install
+
+      - name: Check formatting
+        run: forge fmt --check
+
+      - name: Compile
+        run: forge build --sizes
+
+  # ────────────────────────────────────────────────────────────────────────────
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install dependencies
+        run: forge install
+
+      - name: Run unit tests
+        run: forge test -vvv --match-path "test/*.t.sol"
+
+      - name: Run fuzz tests
+        run: forge test -vvv --match-path "test/fuzz/*.t.sol"
+        continue-on-error: false
+
+      - name: Run invariant tests
+        run: forge test -vvv --match-path "test/invariant/*.t.sol"
+        continue-on-error: false
+
+  # ────────────────────────────────────────────────────────────────────────────
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install lcov
+        run: sudo apt-get install -y lcov
+
+      - name: Install dependencies
+        run: forge install
+
+      - name: Generate coverage report
+        run: |
+          forge coverage --report lcov
+          lcov --remove lcov.info 'test/*' 'script/*' --output-file lcov.info
+          genhtml lcov.info --output-directory coverage-report
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage-report/
+
+      - name: Check minimum coverage
+        run: |
+          COVERAGE=$(lcov --summary lcov.info 2>&1 | grep "lines" | grep -oP '\d+\.\d+(?=%)')
+          echo "Line coverage: $COVERAGE%"
+          python3 -c "
+          cov = float('$COVERAGE')
+          if cov < 90:
+              print(f'FAIL: coverage {cov:.1f}% is below 90%')
+              exit(1)
+          print(f'PASS: coverage {cov:.1f}% meets the 90% requirement')
+          "
+
+  # ────────────────────────────────────────────────────────────────────────────
+  slither:
+    name: Slither Static Analysis
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install dependencies
+        run: forge install
+
+      - name: Run Slither
+        uses: crytic/slither-action@v0.4.0
+        with:
+          target: "src/"
+          slither-args: "--exclude-dependencies --filter-paths lib/"
+          fail-on: high
