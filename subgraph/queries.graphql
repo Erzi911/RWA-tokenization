@@ -1,0 +1,85 @@
+# 1. get all active proposals with vote counts
+query ActiveProposals {
+  proposals(where: { state: 1 }, orderBy: createdAt, orderDirection: desc) {
+    id
+    proposer
+    description
+    startBlock
+    endBlock
+    forVotes
+    againstVotes
+    abstainVotes
+  }
+}
+
+# 2. get vault position for a specific user
+query UserPosition($user: Bytes!, $vault: Bytes!) {
+  vaultPositions(where: { user: $user }) {
+    id
+    shares
+    totalDeposited
+    totalWithdrawn
+    lastUpdated
+    deposits(orderBy: timestamp, orderDirection: desc, first: 10) {
+      assets
+      shares
+      timestamp
+    }
+  }
+}
+
+# 3. recent mint events (last 50)
+query RecentMints {
+  mintEvents(orderBy: timestamp, orderDirection: desc, first: 50) {
+    id
+    to
+    amount
+    minter
+    blockNumber
+    timestamp
+  }
+}
+
+# 4. full proposal history with all votes
+query ProposalWithVotes($proposalId: ID!) {
+  proposal(id: $proposalId) {
+    id
+    proposer
+    description
+    state
+    forVotes
+    againstVotes
+    abstainVotes
+    eta
+    createdAt
+    executedAt
+    votes(orderBy: blockNumber, orderDirection: asc) {
+      voter
+      support
+      weight
+      reason
+    }
+  }
+}
+
+# 5. token stats overview
+query TokenStats($tokenId: ID!) {
+  token(id: $tokenId) {
+    id
+    name
+    symbol
+    totalSupply
+    totalMinted
+    totalBurned
+  }
+}
+
+# 6. top vault depositors by shares
+query TopDepositors($first: Int!) {
+  vaultPositions(orderBy: shares, orderDirection: desc, first: $first) {
+    user
+    shares
+    totalDeposited
+    lastUpdated
+  }
+}

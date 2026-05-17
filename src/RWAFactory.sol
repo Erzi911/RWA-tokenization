@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {RWAToken} from "./RWAToken.sol";
-import {RWAVault} from "./RWAVault.sol";
+import {RWAToken} from "RWAToken.sol";
+import {RWAVault} from "RWAVault.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 

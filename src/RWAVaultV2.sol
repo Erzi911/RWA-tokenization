@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {RWAVault} from "./RWAVault.sol";
+import {RWAVault} from "RWAVault.sol";
 
 // V2 upgrade — adds performance fee on yield
 // storage layout: extends V1, new vars go after __gap

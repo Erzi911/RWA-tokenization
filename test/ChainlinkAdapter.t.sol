@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "./BaseTest.t.sol";
-import {ChainlinkAdapter} from "../src/ChainlinkAdapter.sol";
-import {MockAggregator} from "./mocks/MockAggregator.sol";
+import {BaseTest} from "BaseTest.t.sol";
+import {ChainlinkAdapter} from "src/ChainlinkAdapter.sol";
+import {MockAggregator} from "mocks/MockAggregator.sol";
 
 contract ChainlinkAdapterTest is BaseTest {
     uint256 constant START_TS = 1_700_000_000;

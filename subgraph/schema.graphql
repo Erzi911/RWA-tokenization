@@ -1,0 +1,83 @@
+type Token @entity {
+  id: ID!                      # token contract address
+  name: String!
+  symbol: String!
+  totalSupply: BigInt!
+  totalMinted: BigInt!
+  totalBurned: BigInt!
+  holders: [VaultPosition!]! @derivedFrom(field: "token")
+  mintEvents: [MintEvent!]! @derivedFrom(field: "token")
+}
+
+type VaultPosition @entity {
+  id: ID!                      # vault address + user address
+  user: Bytes!
+  token: Token!
+  shares: BigInt!
+  totalDeposited: BigInt!
+  totalWithdrawn: BigInt!
+  lastUpdated: BigInt!
+  deposits: [DepositEvent!]! @derivedFrom(field: "position")
+  withdrawals: [WithdrawEvent!]! @derivedFrom(field: "position")
+}
+
+type Proposal @entity {
+  id: ID!                      # proposalId
+  proposer: Bytes!
+  targets: [Bytes!]!
+  values: [BigInt!]!
+  calldatas: [Bytes!]!
+  description: String!
+  startBlock: BigInt!
+  endBlock: BigInt!
+  # 0=Pending 1=Active 2=Canceled 3=Defeated 4=Succeeded 5=Queued 6=Expired 7=Executed
+  state: Int!
+  forVotes: BigInt!
+  againstVotes: BigInt!
+  abstainVotes: BigInt!
+  eta: BigInt
+  createdAt: BigInt!
+  executedAt: BigInt
+  canceledAt: BigInt
+  votes: [Vote!]! @derivedFrom(field: "proposal")
+}
+
+type Vote @entity {
+  id: ID!                      # proposalId + voter
+  proposal: Proposal!
+  voter: Bytes!
+  support: Int!                # 0=Against 1=For 2=Abstain
+  weight: BigInt!
+  reason: String
+  blockNumber: BigInt!
+}
+
+type MintEvent @entity {
+  id: ID!                      # txHash + logIndex
+  token: Token!
+  to: Bytes!
+  amount: BigInt!
+  minter: Bytes!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+}
+
+type DepositEvent @entity {
+  id: ID!
+  position: VaultPosition!
+  sender: Bytes!
+  assets: BigInt!
+  shares: BigInt!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+}
+
+type WithdrawEvent @entity {
+  id: ID!
+  position: VaultPosition!
+  receiver: Bytes!
+  assets: BigInt!
+  shares: BigInt!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+}

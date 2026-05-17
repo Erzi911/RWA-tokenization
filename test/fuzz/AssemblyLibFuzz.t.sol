@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {AssemblyLib} from "../../src/AssemblyLib.sol";
+import {AssemblyLib} from "src/AssemblyLib.sol";
 
 contract AssemblyLibFuzzTest is Test {
     // yul and solidity must always return the same result
