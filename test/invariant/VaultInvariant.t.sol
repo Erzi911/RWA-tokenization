@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "BaseTest.t.sol";
+import {BaseTest} from "../BaseTest.t.sol";
 import {RWAVault} from "src/RWAVault.sol";
 
 // invariant: totalAssets >= totalSupply * previewRedeem(1e18) / 1e18

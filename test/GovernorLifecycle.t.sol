@@ -2,10 +2,10 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {RWAToken} from "src/RWAToken.sol";
-import {RWAVault} from "src/RWAVault.sol";
-import {RWAGovernor} from "src/RWAGovernor.sol";
-import {Treasury} from "src/Treasury.sol";
+import {RWAToken} from "../src/RWAToken.sol";
+import {RWAVault} from "../src/RWAVault.sol";
+import {RWAGovernor} from "../src/RWAGovernor.sol";
+import {Treasury} from "../src/Treasury.sol";
 import {IGovernor} from "@openzeppelin/contracts/governance/IGovernor.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";

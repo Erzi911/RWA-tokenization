@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "BaseTest.t.sol";
+import {BaseTest} from "../BaseTest.t.sol";
 
 contract VaultFuzzTest is BaseTest {
     // fuzz deposit with arbitrary amounts — shares always > 0 and proportional

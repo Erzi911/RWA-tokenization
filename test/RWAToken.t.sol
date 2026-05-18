@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "BaseTest.t.sol";
-import {RWAToken} from "src/RWAToken.sol";
+import {BaseTest} from "./BaseTest.t.sol";
+import {RWAToken} from "../src/RWAToken.sol";
 import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
 
 contract RWATokenTest is BaseTest {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IChainlinkFeed} from "interfaces/IChainlinkFeed.sol";
+import {IChainlinkFeed} from "./interfaces/IChainlinkFeed.sol";
 
 // wraps a chainlink feed, adds staleness check, scales to 18 dec
 contract ChainlinkAdapter {

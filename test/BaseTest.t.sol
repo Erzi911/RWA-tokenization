@@ -2,10 +2,10 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {RWAToken} from "src/RWAToken.sol";
-import {RWAVault} from "src/RWAVault.sol";
-import {ChainlinkAdapter} from "src/ChainlinkAdapter.sol";
-import {MockAggregator} from "mocks/MockAggregator.sol";
+import {RWAToken} from "../src/RWAToken.sol";
+import {RWAVault} from "../src/RWAVault.sol";
+import {ChainlinkAdapter} from "../src/ChainlinkAdapter.sol";
+import {MockAggregator} from "./mocks/MockAggregator.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 abstract contract BaseTest is Test {

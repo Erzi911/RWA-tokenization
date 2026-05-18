@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "BaseTest.t.sol";
-import {RWAVault} from "src/RWAVault.sol";
-import {RWAVaultV2} from "src/RWAVaultV2.sol";
+import {BaseTest} from "./BaseTest.t.sol";
+import {RWAVault} from "../src/RWAVault.sol";
+import {RWAVaultV2} from "../src/RWAVaultV2.sol";
 
 contract RWAVaultV2Test is BaseTest {
     RWAVaultV2 internal vaultV2;

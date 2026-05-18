@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "BaseTest.t.sol";
-import {RWAVault} from "src/RWAVault.sol";
+import {BaseTest} from "./BaseTest.t.sol";
+import {RWAVault} from "../src/RWAVault.sol";
 
 contract RWAVaultTest is BaseTest {
     uint256 constant AMT = 1_000e18;

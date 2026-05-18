@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {BaseTest} from "BaseTest.t.sol";
-import {RWAFactory} from "src/RWAFactory.sol";
-import {RWAVault} from "src/RWAVault.sol";
-import {RWAToken} from "src/RWAToken.sol";
+import {BaseTest} from "./BaseTest.t.sol";
+import {RWAFactory} from "../src/RWAFactory.sol";
+import {RWAVault} from "../src/RWAVault.sol";
+import {RWAToken} from "../src/RWAToken.sol";
 
 contract RWAFactoryTest is BaseTest {
     RWAFactory internal factory;

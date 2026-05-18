@@ -8,6 +8,7 @@ on:
 
 env:
   FOUNDRY_PROFILE: ci
+  # BASE_SEPOLIA_RPC_URL: ${{ secrets.BASE_SEPOLIA_RPC_URL }}
 
 jobs:
   # ────────────────────────────────────────────────────────────────────────────
@@ -23,9 +24,15 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
-
-      - name: Install dependencies
-        run: forge install
+      - name: Cache Foundry build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            cache
+            out
+          key: ${{ runner.os }}-foundry-${{ hashFiles('src/**/*.sol', 'test/**/*.sol') }}
+          restore-keys: |
+            ${{ runner.os }}-foundry-
 
       - name: Check formatting
         run: forge fmt --check
@@ -48,19 +55,22 @@ jobs:
         with:
           version: nightly
 
-      - name: Install dependencies
-        run: forge install
+      - name: Cache Foundry build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            cache
+            out
+          key: ${{ runner.os }}-foundry-${{ hashFiles('src/**/*.sol', 'test/**/*.sol') }}
 
       - name: Run unit tests
         run: forge test -vvv --match-path "test/*.t.sol"
 
       - name: Run fuzz tests
         run: forge test -vvv --match-path "test/fuzz/*.t.sol"
-        continue-on-error: false
 
       - name: Run invariant tests
         run: forge test -vvv --match-path "test/invariant/*.t.sol"
-        continue-on-error: false
 
   # ────────────────────────────────────────────────────────────────────────────
   coverage:
@@ -78,15 +88,13 @@ jobs:
           version: nightly
 
       - name: Install lcov
-        run: sudo apt-get install -y lcov
-
-      - name: Install dependencies
-        run: forge install
+        run: sudo apt-get update && sudo apt-get install -y lcov
 
       - name: Generate coverage report
         run: |
           forge coverage --report lcov
-          lcov --remove lcov.info 'test/*' 'script/*' --output-file lcov.info
+          # Исключаем автосгенерированные файлы, тесты и скрипты из метрики покрытия
+          lcov --remove lcov.info 'test/*' 'script/*' 'lib/*' --output-file lcov.info --ignore-errors unused
           genhtml lcov.info --output-directory coverage-report
 
       - name: Upload coverage report
@@ -97,7 +105,7 @@ jobs:
 
       - name: Check minimum coverage
         run: |
-          COVERAGE=$(lcov --summary lcov.info 2>&1 | grep "lines" | grep -oP '\d+\.\d+(?=%)')
+          COVERAGE=$(lcov --summary lcov.info 2>&1 | grep "lines" | grep -oP '\d+\.\d+(?=%)' | head -n 1)
           echo "Line coverage: $COVERAGE%"
           python3 -c "
           cov = float('$COVERAGE')
@@ -116,18 +124,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          version: nightly
-
-      - name: Install dependencies
-        run: forge install
+          python-version: '3.10'
 
       - name: Run Slither
         uses: crytic/slither-action@v0.4.0
         with:
-          target: "src/"
-          slither-args: "--exclude-dependencies --filter-paths lib/"
+          target: "."
+          slither-args: "--solc-remaps 'forge-std/=lib/forge-std/src/' --exclude-dependencies --filter-paths 'lib/|test/'"
           fail-on: high
